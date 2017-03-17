@@ -10,10 +10,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
     [RequireComponent(typeof (AudioSource))]
     public class FirstPersonController : MonoBehaviour
     {
-        [SerializeField] private bool m_IsWalking;
+		[SerializeField] private bool m_IsWalking;
+		[SerializeField] private bool m_IsSquating;
         [SerializeField] private float m_WalkSpeed;
-        [SerializeField] private float m_RunSpeed;
-        [SerializeField] [Range(0f, 1f)] private float m_RunstepLenghten;
+		[SerializeField] private float m_SquatSpeed;
+        [SerializeField] [Range(0f, 1f)] private float m_SquatstepLenghten;
         [SerializeField] private float m_JumpSpeed;
         [SerializeField] private float m_StickToGroundForce;
         [SerializeField] private float m_GravityMultiplier;
@@ -41,6 +42,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+		private Transform FPSCharacter;
 
         // Use this for initialization
         private void Start()
@@ -55,6 +57,9 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+			FPSCharacter=transform.FindChild("FirstPersonCharacter");
+			//FPSCharacter.transform.position = new Vector3 (transform.position.x, 0f, transform.position.z);
+			//print (FPSCharacter.name);
         }
 
 
@@ -145,7 +150,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             if (m_CharacterController.velocity.sqrMagnitude > 0 && (m_Input.x != 0 || m_Input.y != 0))
             {
-                m_StepCycle += (m_CharacterController.velocity.magnitude + (speed*(m_IsWalking ? 1f : m_RunstepLenghten)))*
+                m_StepCycle += (m_CharacterController.velocity.magnitude + (speed*(m_IsWalking ? 1f : m_SquatstepLenghten)))*
                              Time.fixedDeltaTime;
             }
 
@@ -188,7 +193,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             {
                 m_Camera.transform.localPosition =
                     m_HeadBob.DoHeadBob(m_CharacterController.velocity.magnitude +
-                                      (speed*(m_IsWalking ? 1f : m_RunstepLenghten)));
+                                      (speed*(m_IsWalking ? 1f : m_SquatstepLenghten)));
                 newCameraPosition = m_Camera.transform.localPosition;
                 newCameraPosition.y = m_Camera.transform.localPosition.y - m_JumpBob.Offset();
             }
@@ -212,10 +217,12 @@ namespace UnityStandardAssets.Characters.FirstPerson
 #if !MOBILE_INPUT
             // On standalone builds, walk/run speed is modified by a key press.
             // keep track of whether or not the character is walking or running
-            m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
+			m_IsWalking=!m_IsSquating;
+			m_IsSquating=Input.GetButton("Squat");
+
 #endif
             // set the desired speed to be walking or running
-            speed = m_IsWalking ? m_WalkSpeed : m_RunSpeed;
+			speed =m_IsWalking ? m_WalkSpeed:m_SquatSpeed;
             m_Input = new Vector2(horizontal, vertical);
 
             // normalize input if it exceeds 1 in combined length:
@@ -231,6 +238,21 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 StopAllCoroutines();
                 StartCoroutine(!m_IsWalking ? m_FovKick.FOVKickUp() : m_FovKick.FOVKickDown());
             }
+
+			//CharacterController charaCon = GetComponent<CharacterController> ();
+			//float charaCenter = charaCon.center.y;
+			//charaCenter = 5.0f;// m_IsWalking ? :1.3f;
+			//Vector3 posy = this.transform.position;
+
+			if (m_IsWalking) 
+			{
+				transform.localScale = new Vector3 (1f, 1f, 1f);
+			}
+
+			if (m_IsSquating) 
+			{
+				transform.localScale = new Vector3 (1f, 0.4f, 1f);
+			}
         }
 
 
