@@ -12,6 +12,7 @@ public class GunController : MonoBehaviour {
 	[SerializeField] GameObject MuzzleFireEffect;
 	[SerializeField] GameObject MuzzleFire;
 	//弾薬系
+	[SerializeField] GameObject FirstPersonCharacter;  //カメラの位置取得
 	[SerializeField] int bullet;  //残弾数
 	[SerializeField] int maxBullet;  //最大弾薬数
 	[SerializeField] int bulletBox;  //弾倉の最大収容数
@@ -52,16 +53,17 @@ public class GunController : MonoBehaviour {
 	{
 		if (bullet > 0 && interval > coolTime)
 		{
-		Ray ray = new Ray (transform.position, transform.forward);
-		RaycastHit hit = new RaycastHit ();
+			Ray ray = new Ray (FirstPersonCharacter.transform.position, FirstPersonCharacter.transform.forward);
+			RaycastHit hit = new RaycastHit ();
+			Vector3 hitpoint = hit.point;
+			GameObject cloneMuzzleFireEffect = (GameObject)Instantiate (MuzzleFireEffect, MuzzleFire.transform.position, Quaternion.identity);
+			cloneMuzzleFireEffect.transform.LookAt (FirstPersonCharacter.transform);
+			cloneMuzzleFireEffect.transform.parent = gameObject.transform;
+			Destroy (cloneMuzzleFireEffect, 0.1f);
 
 			if (Physics.Raycast (ray, out hit))
 			{
-				Vector3 hitpoint = hit.point;
-				GameObject cloneMuzzleFireEffect = (GameObject)Instantiate (MuzzleFireEffect, MuzzleFire.transform.position, Quaternion.identity);
-				cloneMuzzleFireEffect.transform.parent = gameObject.transform;
 				GameObject cloneFireEffect = (GameObject)Instantiate (fireEffect, hitpoint, Quaternion.identity);
-				Destroy (cloneMuzzleFireEffect, 0.2f);
 				Destroy (cloneFireEffect, 0.5f);
 			}
 		}
@@ -81,13 +83,21 @@ public class GunController : MonoBehaviour {
 
 	void reload()
 	{
+		
 		if (bullet < maxBullet) 
 		{
-			int reloadBullet = maxBullet - bullet;
-			bulletBox -= reloadBullet;
-			bullet = maxBullet;
-			audioSource.PlayOneShot (reloadSound);
-			print (bulletBox);
+			int reloadBullet = maxBullet - bullet;	
+			if (reloadBullet <= bulletBox) {
+				bulletBox -= reloadBullet;
+				bullet = maxBullet;
+				audioSource.PlayOneShot (reloadSound);
+				print (bulletBox);
+			} else {
+				bullet += bulletBox;
+				bulletBox = 0;
+				audioSource.PlayOneShot (reloadSound);
+				print (bulletBox);
+			}
 		}
 	}
 }
