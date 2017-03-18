@@ -28,6 +28,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         [SerializeField] private AudioClip[] m_FootstepSounds;    // an array of footstep sounds that will be randomly selected from.
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
+		[SerializeField] private GameObject FPSCharacter;
 
         private Camera m_Camera;
         private bool m_Jump;
@@ -42,7 +43,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
-		private Transform FPSCharacter;
 
         // Use this for initialization
         private void Start()
@@ -57,7 +57,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
-			FPSCharacter=transform.FindChild("FirstPersonCharacter");
+			//FPSCharacter=transform.FindChild("FirstPersonCharacter");
 			//FPSCharacter.transform.position = new Vector3 (transform.position.x, 0f, transform.position.z);
 			//print (FPSCharacter.name);
         }
@@ -136,6 +136,11 @@ namespace UnityStandardAssets.Characters.FirstPerson
             UpdateCameraPosition(speed);
 
             m_MouseLook.UpdateCursorLock();
+
+			//しゃがむ機能
+			if (Input.GetKey (KeyCode.C)) {
+				FPSCharacter.transform.position = new Vector3 (transform.position.x, 4.5f, transform.position.z);
+			}
         }
 
 
@@ -243,16 +248,6 @@ namespace UnityStandardAssets.Characters.FirstPerson
 			//float charaCenter = charaCon.center.y;
 			//charaCenter = 5.0f;// m_IsWalking ? :1.3f;
 			//Vector3 posy = this.transform.position;
-
-			if (m_IsWalking) 
-			{
-				transform.localScale = new Vector3 (1f, 1f, 1f);
-			}
-
-			if (m_IsSquating) 
-			{
-				transform.localScale = new Vector3 (1f, 0.4f, 1f);
-			}
         }
 
 
