@@ -5,23 +5,22 @@ using UnityEngine;
 public class GunController : MonoBehaviour {
 
 	//サウンド系
-	AudioClip shotSound;
+	[SerializeField] AudioClip shotSound;
 	AudioSource audioSource;
 	//エフェクト系
 	[SerializeField] GameObject fireEffect;
 	[SerializeField] GameObject MuzzleFireEffect;
 	[SerializeField] GameObject MuzzleFire;
 	//弾薬系
-	int bullet;　　//残弾数
+	int bullet;  //残弾数
 	[SerializeField] int maxBullet;  //最大弾薬数
-	[SerializeField] int bulletBox;　　//弾倉の最大収容数
-	float coolTime =0.5f;
-	float interval =0f;
+	[SerializeField] int bulletBox;  //弾倉の最大収容数
+	float coolTime = 0.1f;
+	float interval = 0f;
 
 
 	// Use this for initialization
 	void Start () {
-		shotSound = Resources.Load<AudioClip>("Audio/fireSound");
 		audioSource = GetComponent<AudioSource>();
 		bullet = maxBullet;
 	}
