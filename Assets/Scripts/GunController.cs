@@ -83,7 +83,6 @@ public class GunController : MonoBehaviour {
 
 	void reload()
 	{
-		
 		if (bullet < maxBullet) 
 		{
 			int reloadBullet = maxBullet - bullet;	
