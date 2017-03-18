@@ -12,36 +12,51 @@ public class GunController : MonoBehaviour {
 	[SerializeField] GameObject MuzzleFireEffect;
 	[SerializeField] GameObject MuzzleFire;
 	//弾薬系
-	int bullet;  //残弾数
+	[SerializeField] int bullet;  //残弾数
 	[SerializeField] int maxBullet;  //最大弾薬数
 	[SerializeField] int bulletBox;  //弾倉の最大収容数
 	float coolTime = 0.1f;
 	float interval = 0f;
+	//リロード系
+	[SerializeField] AudioClip reloadSound;
 
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
 		audioSource = GetComponent<AudioSource>();
 		bullet = maxBullet;
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
+		//インターバル
 		interval += Time.deltaTime;
-		if (Input.GetMouseButtonDown (0)) {
+		//クリック時に発砲
+		if (Input.GetMouseButtonDown (0))
+		{
 			rayControll ();
 			shot ();
 		}
+		//Rを押したらリロード
+		if (Input.GetKeyDown (KeyCode.R))
+		{
+			reload ();
+		}
 	}
 
+
 	//Rayが当たった場所にエフェクト表示＆銃口にエフェクト表示
-	void rayControll(){
+	void rayControll()
+	{
 		if (bullet > 0 && interval > coolTime)
 		{
 		Ray ray = new Ray (transform.position, transform.forward);
 		RaycastHit hit = new RaycastHit ();
 
-			if (Physics.Raycast (ray, out hit)) {
+			if (Physics.Raycast (ray, out hit))
+			{
 				Vector3 hitpoint = hit.point;
 				GameObject cloneMuzzleFireEffect = (GameObject)Instantiate (MuzzleFireEffect, MuzzleFire.transform.position, Quaternion.identity);
 				cloneMuzzleFireEffect.transform.parent = gameObject.transform;
@@ -53,12 +68,26 @@ public class GunController : MonoBehaviour {
 	}
 
 	//発砲時の弾薬の設定＆サウンド設定
-	void shot(){
-		if (bullet > 0 && interval > coolTime) {
+	void shot()
+	{
+		if (bullet > 0 && interval > coolTime)
+		{
 			bullet--;
 			audioSource.PlayOneShot (shotSound);
 			print (bullet);
 			interval = 0;
+		}
+	}
+
+	void reload()
+	{
+		if (bullet < maxBullet) 
+		{
+			int reloadBullet = maxBullet - bullet;
+			bulletBox -= reloadBullet;
+			bullet = maxBullet;
+			audioSource.PlayOneShot (reloadSound);
+			print (bulletBox);
 		}
 	}
 }
