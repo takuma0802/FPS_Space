@@ -23,8 +23,8 @@ public class Target : MonoBehaviour {
 		targetLife--;
 		if (targetLife == 0)
 		{
-			//anim.SetBool ("IsBroken", true);
-			//Invoke ("Revival", 10f);
+			anim.SetBool ("IsBroken", true);
+			Invoke ("Revival", 10f);
 		}
 	}
 
