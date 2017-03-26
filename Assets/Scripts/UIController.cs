@@ -25,7 +25,7 @@ public class UIController : MonoBehaviour {
 		limitTime -= Time.deltaTime;
 		time.text="Time:" + limitTime.ToString("F1") + "s";
 		pt.text = "Pt:" + score.score;
-		bulletBox.text = "BulletBox" + gun.bulletBox;
+		bulletBox.text = "BulletBox:" + gun.bulletBox;
 		bullet.text = "Bullet:" + gun.bullet + "/" + gun.maxBullet;
 
 	}
