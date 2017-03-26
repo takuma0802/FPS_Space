@@ -13,9 +13,9 @@ public class GunController : MonoBehaviour {
 	[SerializeField] private GameObject MuzzleFire;
 	//弾薬系
 	[SerializeField] private GameObject FirstPersonCharacter;  //カメラの位置取得
-	[SerializeField] int bullet;  //残弾数
-	[SerializeField] int maxBullet;  //最大弾薬数
-	[SerializeField] int bulletBox;  //弾倉の最大収容数
+	public int bullet;  //残弾数
+	public int maxBullet;  //最大弾薬数
+	public int bulletBox;  //弾倉の最大収容数
 	float coolTime = 0.1f;
 	float interval = 0f;
 	//リロード系
@@ -73,7 +73,6 @@ public class GunController : MonoBehaviour {
 				cloneFireEffect.transform.position = hit.point - ray.direction;
 				Destroy (cloneFireEffect, 0.5f);
 				Target target = hit.collider.gameObject.GetComponent<Target> ();
-				print (hit.collider.name);
 				if (target != null) {
 					target.Hit ();
 					score.ScorePlus(hit.point);
@@ -89,7 +88,6 @@ public class GunController : MonoBehaviour {
 		{
 			bullet--;
 			audioSource.PlayOneShot (shotSound);
-			print (bullet);
 			interval = 0;
 		}
 	}
@@ -103,12 +101,10 @@ public class GunController : MonoBehaviour {
 				bulletBox -= reloadBullet;
 				bullet = maxBullet;
 				audioSource.PlayOneShot (reloadSound);
-				print (bulletBox);
 			} else {
 				bullet += bulletBox;
 				bulletBox = 0;
 				audioSource.PlayOneShot (reloadSound);
-				print (bulletBox);
 			}
 		}
 	}

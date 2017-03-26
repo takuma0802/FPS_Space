@@ -18,7 +18,6 @@ public class ScoreManager : MonoBehaviour {
 		Vector3 markerPos = headMarker.transform.position;
 		float distance = Vector3.Distance (hitPosition, markerPos);
 		score += Score(distance);
-		print (score);
 	}
 
 	public int Score(float distance){
