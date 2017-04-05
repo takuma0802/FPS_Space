@@ -12,7 +12,7 @@ public class UIController : MonoBehaviour {
 	[SerializeField]private Text bulletBox;
 	[SerializeField]private Text bullet;
 
-	[SerializeField]float limitTime = 100.0f;
+	[SerializeField]float limitTime = 0f;
 
 	// Use this for initialization
 	void Start () {
@@ -22,8 +22,8 @@ public class UIController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		limitTime -= Time.deltaTime;
-		time.text="Time:" + limitTime.ToString("F1") + "s";
+		limitTime += Time.deltaTime;
+		time.text="Time" + limitTime.ToString("F1") + "s";
 		pt.text = "Pt:" + score.score;
 		bulletBox.text = "BulletBox:" + gun.bulletBox;
 		bullet.text = "Bullet:" + gun.bullet + "/" + gun.maxBullet;
