@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour {
 
+
+
 	//サウンド系
 	[SerializeField] AudioClip shotSound;
 	AudioSource audioSource;
@@ -16,7 +18,7 @@ public class GunController : MonoBehaviour {
 	public int bullet;  //残弾数
 	public int maxBullet;  //最大弾薬数
 	public int bulletBox;  //弾倉の最大収容数
-	float coolTime = 0.1f;
+	float coolTime = 0.5f;
 	float interval = 0f;
 	//リロード系
 	[SerializeField] private AudioClip reloadSound;
@@ -41,7 +43,7 @@ public class GunController : MonoBehaviour {
 		interval += Time.deltaTime;
 		reloadInterval += Time.deltaTime;
 		//クリック時に発砲
-		if (Input.GetMouseButtonDown (0))
+		if (Input.GetMouseButtonDown (0) && bullet > 0 && interval > coolTime && reloadInterval > reloadTime)
 		{
 			rayControll ();
 			shot ();
@@ -58,53 +60,46 @@ public class GunController : MonoBehaviour {
 	//Rayが当たった場所にエフェクト表示＆銃口にエフェクト表示
 	void rayControll()
 	{
-		if (bullet > 0 && interval > coolTime && reloadInterval > reloadTime)
-		{
-			Ray ray = new Ray (FirstPersonCharacter.transform.position, FirstPersonCharacter.transform.forward);
-			RaycastHit hit;
-			GameObject cloneMuzzleFireEffect = (GameObject)Instantiate (MuzzleFireEffect, MuzzleFire.transform.position, Quaternion.identity);
-			cloneMuzzleFireEffect.transform.LookAt (FirstPersonCharacter.transform);
-			cloneMuzzleFireEffect.transform.parent = gameObject.transform;
-			Destroy (cloneMuzzleFireEffect, 0.1f);
+		Ray ray = new Ray (FirstPersonCharacter.transform.position, FirstPersonCharacter.transform.forward);
+		RaycastHit hit;
+		GameObject cloneMuzzleFireEffect = (GameObject)Instantiate (MuzzleFireEffect, MuzzleFire.transform.position, Quaternion.identity);
+		cloneMuzzleFireEffect.transform.LookAt (FirstPersonCharacter.transform);
+		cloneMuzzleFireEffect.transform.parent = gameObject.transform;
+		Destroy (cloneMuzzleFireEffect, 0.1f);
 
-			if (Physics.Raycast (ray, out hit))
-			{
-				GameObject cloneFireEffect = (GameObject)Instantiate (fireEffect);
-				cloneFireEffect.transform.position = hit.point - ray.direction;
-				Destroy (cloneFireEffect, 0.5f);
-				Target target = hit.collider.gameObject.GetComponent<Target> ();
-				if (target != null) {
-					target.Hit ();
-					score.ScorePlus(hit.point);
-					}
-				}
+		if (Physics.Raycast (ray, out hit))
+		{
+			GameObject cloneFireEffect = (GameObject)Instantiate (fireEffect);
+			cloneFireEffect.transform.position = hit.point - ray.direction;
+			Destroy (cloneFireEffect, 0.5f);
+			Target target = hit.collider.gameObject.GetComponent<Target> ();
+			if (target != null) {
+				target.Hit ();
+				score.ScorePlus(hit.point);
 			}
 		}
+	}
 
 	//発砲時の弾薬の設定＆サウンド設定
 	void shot()
 	{
-		if (bullet > 0 && interval > coolTime && reloadInterval > reloadTime)
-		{
-			bullet--;
-			audioSource.PlayOneShot (shotSound);
-			interval = 0;
-		}
+		bullet--;
+		audioSource.PlayOneShot (shotSound);
+		interval = 0;
 	}
 
 	void reload()
 	{
 		if (bullet < maxBullet) 
 		{
-			int reloadBullet = maxBullet - bullet;	
+			audioSource.PlayOneShot (reloadSound);
+			int reloadBullet = maxBullet - bullet;
 			if (reloadBullet <= bulletBox) {
 				bulletBox -= reloadBullet;
 				bullet = maxBullet;
-				audioSource.PlayOneShot (reloadSound);
 			} else {
 				bullet += bulletBox;
 				bulletBox = 0;
-				audioSource.PlayOneShot (reloadSound);
 			}
 		}
 	}

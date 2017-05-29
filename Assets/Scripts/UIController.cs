@@ -12,6 +12,7 @@ public class UIController : MonoBehaviour {
 	[SerializeField]private Text bulletBox;
 	[SerializeField]private Text bullet;
 
+
 	[SerializeField]float limitTime = 0f;
 
 	// Use this for initialization
